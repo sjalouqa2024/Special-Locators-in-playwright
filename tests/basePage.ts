@@ -4,7 +4,7 @@ export class BasePage
 {
     constructor(readonly page:Page){
     }
-    //open home page
+    // ProtoCommerce Page
     async openHomePage():Promise<void>
         {
               await this.page.goto("https://rahulshettyacademy.com/angularpractice/");

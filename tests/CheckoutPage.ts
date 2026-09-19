@@ -1,4 +1,4 @@
-import { Page, Locator } from "@playwright/test";
+import { Page, Locator ,expect} from "@playwright/test";
 import { BasePage } from "./basePage";
 
 export class CheckoutPage extends BasePage {
@@ -14,13 +14,9 @@ export class CheckoutPage extends BasePage {
         this.continueShoppingButton = page.getByRole("button", { name: "Continue Shopping" });
         this.checkoutButton = page.getByRole("button", { name: "Checkout" });
     }
-    override async openShopPage() :Promise<void>
-    {
-        await super.openShopPage();
-        await this.checkoutTable.waitFor();
-        await this.total.waitFor();
-        await this.continueShoppingButton.waitFor();
-        await this.checkoutButton.waitFor();
-    }
+    override async openShopPage(): Promise<void> {
+    await super.openShopPage();
+    await expect(this.checkoutTable).toBeVisible();
+}
      
     }

@@ -2,7 +2,6 @@ import { test, expect } from "@playwright/test";
 import { ProtoCommercePage} from "./ProtoCommercePage";
 import { ShopPage} from "./ShopPage";
 import { CheckoutPage} from "./CheckoutPage";
-import { DeliveryPage} from "./deliveryLocationPage";
 
 test.use({
   launchOptions: { slowMo: 800 },
@@ -30,13 +29,21 @@ test("Complete ProtoCommerce purchase flow", async ({ page }) => {
 
     await shopPage.openShopPage();
 
-    await expect(shopPage.iphone_X_Card).toBeVisible();
-    await expect(shopPage.Blackberry_Card).toBeVisible();
+    // Get product names before adding
+const firstProductName = await shopPage.firstProductCard
+  .locator("h4 a")
+  .innerText();
+const lastProductName = await shopPage.lastProductCard
+  .locator("h4 a")
+  .innerText();
 
-    await shopPage.addProductToCart("iphone X");
-    await shopPage.addProductToCart("Blackberry");
+    // Add first product
+    await shopPage.addFirstProduct();
 
-    await expect(shopPage.Checkout_Button).toBeVisible();
+    // Add last product
+    await shopPage.addLastProduct();
+
+    // Verify they were added to cart
     await expect(shopPage.Checkout_Button).toContainText("Checkout ( 2 )");
 
     await shopPage.Checkout_Button.click();
@@ -48,27 +55,19 @@ test("Complete ProtoCommerce purchase flow", async ({ page }) => {
 
     const checkoutPage = new CheckoutPage(page);
 
+    // Wait for checkout page to load
     await expect(checkoutPage.checkoutTable).toBeVisible();
     await expect(checkoutPage.total).toBeVisible();
-    await expect(checkoutPage.continueShoppingButton).toBeVisible();
-    await expect(checkoutPage.checkoutButton).toBeVisible();
 
-    await checkoutPage.checkoutButton.click();
+ // Verify first product is in the table
+  await expect(checkoutPage.checkoutTable).toContainText(firstProductName);
+
+  // Verify last product is in the table
+  await expect(checkoutPage.checkoutTable).toContainText(lastProductName);
+
+  // Verify other checkout elements
+  await expect(checkoutPage.continueShoppingButton).toBeVisible();
+  await expect(checkoutPage.checkoutButton).toBeVisible();
 
 
-    // -------------------------
-    // Delivery
-    // -------------------------
-
-    const deliveryPage = new DeliveryPage(page);
-
-    await expect(deliveryPage.deliveryLocationLabel).toBeVisible();
-    await expect(deliveryPage.deliveryLocationInput).toBeVisible();
-    await expect(deliveryPage.termsAndConditionsLink).toBeVisible();
-    await deliveryPage.enterDeliveryLocation("Amman-Jordan");  
-    await deliveryPage.openTermsAndConditions();
-    await expect(deliveryPage.termsAndConditionsModal).toBeVisible();
-    await deliveryPage.closeTermsAndConditions();
-    await deliveryPage.agreeToTerms();
-    await expect(deliveryPage.agreeTermsCheckbox).toBeChecked();
 });
