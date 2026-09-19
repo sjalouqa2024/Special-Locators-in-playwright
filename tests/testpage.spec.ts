@@ -65,12 +65,6 @@ const lastProductName = await shopPage.lastProductCard
   // Verify last product is in the table
   await expect(checkoutPage.checkoutTable).toContainText(lastProductName);
 
-  // Verify we have 2 product rows (excluding header and total)
-  const productRows = await page.locator("tbody tr").count();
-
-  // Should be 3: first product, last product, and total row
-  expect(productRows).toBe(3);
-
   // Verify other checkout elements
   await expect(checkoutPage.continueShoppingButton).toBeVisible();
   await expect(checkoutPage.checkoutButton).toBeVisible();

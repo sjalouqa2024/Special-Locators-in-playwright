@@ -37,7 +37,7 @@ async submitData():Promise<void>{
     await this.Name.fill("user1");
     await this.Email.fill("user1@email.com");
     await this.password.fill("P@ssw0rd@123");
-    await this.Student.check();  // Changed from IceCreams
+    await this.IceCreams.check();
     await this.Gender.selectOption("Female");
     await this.Employed.check();
     await this.submit.click();
